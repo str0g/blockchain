@@ -6,23 +6,13 @@
 #include "blockchain.h"
 #include "node_data.h"
 
-void msg(int nb, const char* desc) {
-    std::cout << "option " << desc << " requires " << nb << " arguments" << std::endl;
-}
-
-bool next_action(void(*fun)(const char *opt, void *ptr),void *ptr, int argc, char** argv) {
-    if (optind < argc && *argv[optind] != '-') {
-        fun(argv[optind], ptr);
-        optind++;
-        return true;
-    } else {
-        return false;
-    }
-}
+void msg(int nb, const char* desc);
+bool next_action(void(*fun)(const char *opt, void *ptr),void *ptr, int argc, char** argv);
+void help();
 
 int main(int argc, char **argv) {
         //TODO parser args
-    auto& obj = Blockchain::getInstance();
+    auto& blockchain = Blockchain::getInstance();
 
     int c;
     int digit_optind = 0;
@@ -31,7 +21,8 @@ int main(int argc, char **argv) {
         int option_index = 0;
         static struct option long_options [] = {
             {"add", required_argument, 0, 'a'},
-            //{"add", required_argument, (int*)test, 'a'},
+            {"remove", required_argument, 0, 'r'},
+            {"count", no_argument, 0, 'c'},
         };
 
         c = getopt_long(argc, argv, "a", long_options, &option_index);
@@ -87,13 +78,13 @@ int main(int argc, char **argv) {
                     node_data.elements.shrink_to_fit();
                     node_data.header.elements_nb = node_data.elements.size();
 
-                    //@TODO add element
+                    auto& data = blockchain.add(node_data);
                     
                     std::cout<<"Summary: " << std::endl;
-                    std::cout<<"index " << node_data.header.index<<std::endl;
-                    std::cout<<"sha " << node_data.header.sha<<std::endl;
-                    std::cout<<"elements["<< node_data.header.elements_nb<<"]:"<<std::endl;
-                    for(auto&e : node_data.elements) {
+                    std::cout<<"index " << data.header.index<<std::endl;
+                    std::cout<<"sha " << data.header.sha<<std::endl;
+                    std::cout<<"elements["<< data.header.elements_nb<<"]:"<<std::endl;
+                    for(auto&e : data.elements) {
                         if(e.element[0] == '\0')
                             break;
                         std::cout<<"\t"<<e.element<<std::endl;
@@ -108,6 +99,18 @@ int main(int argc, char **argv) {
                 std::cout << std::endl;
                 }
                 break;
+            case 'r':
+                try {
+                    blockchain.remove(std::stoull(optarg));
+                    break;
+                } catch(const std::invalid_argument& e) {
+                } catch(const std::out_of_range& e) {
+                }
+                blockchain.remove(optarg);
+                break;
+            case 'c':
+                std::cout << blockchain.count() << std::endl;
+                break;
             default:
                 std::cout << "getopt returned character code 0x" << std::hex << c << std::endl;
                 break;
@@ -119,7 +122,32 @@ int main(int argc, char **argv) {
         while(optind < argc)
             std::cout << argv[optind++] << " ";
         std::cout << std::endl;
+
+        help();
     }
 
     return 0;
+}
+void msg(int nb, const char* desc) {
+    std::cout << "option " << desc << " requires " << nb << " arguments" << std::endl;
+}
+
+bool next_action(void(*fun)(const char *opt, void *ptr),void *ptr, int argc, char** argv) {
+    if (optind < argc && *argv[optind] != '-') {
+        fun(argv[optind], ptr);
+        optind++;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void help() {
+    std::cout <<
+    "Options:\n"
+            "\t--add <id> <parent sha> <line1> <linen>: Add block\n"
+            "\t--remove: <arg>      Remove block by block id or sha\n"
+            "\t--count:             Set sigma of program\n"
+            "\t--help:              Show help\n";
+    exit(1);
 }

@@ -14,4 +14,14 @@ if(WITH_TESTS)
     target_link_libraries(${test_name} ${PROJECT_NAME} ${GTEST_DEP_LIBS})
     add_test(${test_name} ${test_name})
 
+    set(test_name "blockchain_add_test")
+    add_executable(${test_name} tests/${test_name}.cpp)
+    target_link_libraries(${test_name} ${PROJECT_NAME} ${GTEST_DEP_LIBS})
+    add_test(${test_name} ${test_name})
+
+    set(test_name "blockchain_remove_test")
+    add_executable(${test_name} tests/${test_name}.cpp)
+    target_link_libraries(${test_name} ${PROJECT_NAME} ${GTEST_DEP_LIBS})
+    add_test(${test_name} ${test_name})
+
 endif()

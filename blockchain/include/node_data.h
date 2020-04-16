@@ -31,7 +31,7 @@ struct node_data_t {
     using Elements = std::vector<element_t>;
 
     struct header_t {
-        unsigned index;
+        size_t index;
         size_t elements_nb;
         char sha[65];
     
@@ -40,10 +40,7 @@ struct node_data_t {
         }
 
         private:
-            header_t(const header_t&) = delete;
-            header_t(header_t&&) = delete;
             header_t& operator=(const header_t&) = delete;
-            header_t& operator=(header_t&&) = delete;
     };
     header_t header;
     Elements elements;
@@ -55,10 +52,7 @@ struct node_data_t {
     node_data_t() = default;
 
     private:
-        node_data_t(const node_data_t&) = delete;
-        node_data_t(node_data_t&&) = delete;
         node_data_t& operator=(const node_data_t&) = delete;
-        node_data_t& operator=(node_data_t&&) = delete;
 };
 
 
