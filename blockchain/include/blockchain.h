@@ -3,16 +3,8 @@
 
 #include <unordered_map>
 
-#include "StoreInterface.h"
-#include "LoadInterface.h"
-
-class StoreToFile: public StoreInterface {
-    void operator()(const node_data_t&, void *extra_args);
-};
-
-class LoadFromFile: public LoadInterface {
-    void operator()(node_data_t&, void *extra_args); 
-};
+#include "load_interface.h"
+#include "store_interface.h"
 
 class Blockchain {
     public:
@@ -20,11 +12,12 @@ class Blockchain {
 
         void verify() const;
         size_t count() const;
-        void store(void*);
-        void load(void*);
+        void store(void* =nullptr);
+        void load(void* = nullptr);
         const node_data_t& add(node_data_t&);
-        void remove(size_t);
-        void remove(const char*);
+        void remove(const std::string&);
+        std::string get_sha256(const std::string&) const;
+        std::string get_sha256(const std::vector<unsigned char>&) const;
         
         void set_custom_load(LoadInterface*);
         void set_custom_store(StoreInterface*);
@@ -32,9 +25,8 @@ class Blockchain {
         ~Blockchain();
 
     private:
-        using chain_it = std::__detail::_Node_iterator<std::pair<const long unsigned int, node_data_t>, false, false>;
         Blockchain();
-        chain_it find(const char* sha);
+        chain_it find_child(const std::string&);
 
         Blockchain(Blockchain const&) = delete;
         Blockchain(Blockchain &&) = delete;
@@ -42,10 +34,10 @@ class Blockchain {
         Blockchain& operator=(Blockchain const&) = delete;
         Blockchain& operator=(Blockchain &&) = delete;
         /*
-         * due to fact this is a demo will use best container for my pleasure
-         * In real life project mmap as fast access bufer would be preferable choice.
+         * Due to fact this is a demo will use best container for my pleasure.
+         * Real life project would experiment with mmap as fast access.
          */
-        std::unordered_map<size_t, node_data_t> chain;
+        std::unordered_map<std::string, node_data_t> chain;
         LoadInterface* _load;
         StoreInterface* _store;
 };

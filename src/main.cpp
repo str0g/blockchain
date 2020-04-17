@@ -39,27 +39,27 @@ int main(int argc, char **argv) {
             case 'a':
                 {
                 auto get_sha = [](const char *opt, void *ptr) {
-                    size_t size { strnlen(opt, sizeof(node_data_t::header_t::sha)) };
-                    if (size != sizeof(node_data_t::header_t::sha)-1) {
+                    size_t size { strnlen(opt, sizeof(node_data_t::sha)) };
+                    if (size != sizeof(node_data_t::sha)-1) {
                         std::cout << "length:" << size << " " << opt << std::endl;
                         throw std::invalid_argument("is not sha256");
                     }
 
                     node_data_t& node_data = *static_cast<node_data_t*>(ptr);
-                    strncpy(node_data.header.sha, opt, size);
+                    strncpy(node_data.sha, opt, size);
                 };
                 auto get_line = [](const char *opt, void *ptr) {
                     node_data_t& node_data = *static_cast<node_data_t*>(ptr);
                     size_t size = strnlen(opt, sizeof(node_data_t::element_t::element));
-                    strncpy(node_data.elements[node_data.header.elements_nb], opt, size);
-                    node_data.header.elements_nb++;
+                    strncpy(node_data.elements[node_data.elements_nb], opt, size);
+                    node_data.elements_nb++;
                 };
 
                 node_data_t node_data;
                 int max = 10;
                 node_data.elements.resize(max--);
                 try {
-                    node_data.header.index = std::stoull(optarg);
+                    node_data.block_id = std::stoull(optarg);
 
                     if(!next_action(get_sha, &node_data, argc, argv)) {
                         msg(3, "add");
@@ -76,14 +76,14 @@ int main(int argc, char **argv) {
                     node_data.elements.resize(size+1);
 
                     node_data.elements.shrink_to_fit();
-                    node_data.header.elements_nb = node_data.elements.size();
+                    node_data.elements_nb = node_data.elements.size();
 
                     auto& data = blockchain.add(node_data);
                     
                     std::cout<<"Summary: " << std::endl;
-                    std::cout<<"index " << data.header.index<<std::endl;
-                    std::cout<<"sha " << data.header.sha<<std::endl;
-                    std::cout<<"elements["<< data.header.elements_nb<<"]:"<<std::endl;
+                    std::cout<<"block_id " << data.block_id<<std::endl;
+                    std::cout<<"sha " << data.sha<<std::endl;
+                    std::cout<<"elements["<< data.elements_nb<<"]:"<<std::endl;
                     for(auto&e : data.elements) {
                         if(e.element[0] == '\0')
                             break;
@@ -100,12 +100,6 @@ int main(int argc, char **argv) {
                 }
                 break;
             case 'r':
-                try {
-                    blockchain.remove(std::stoull(optarg));
-                    break;
-                } catch(const std::invalid_argument& e) {
-                } catch(const std::out_of_range& e) {
-                }
                 blockchain.remove(optarg);
                 break;
             case 'c':
@@ -146,7 +140,7 @@ void help() {
     std::cout <<
     "Options:\n"
             "\t--add <id> <parent sha> <line1> <linen>: Add block\n"
-            "\t--remove: <arg>      Remove block by block id or sha\n"
+            "\t--remove: <arg>      Remove block by block sha\n"
             "\t--count:             Set sigma of program\n"
             "\t--help:              Show help\n";
     exit(1);

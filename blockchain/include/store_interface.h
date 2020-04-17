@@ -8,7 +8,7 @@
  */
 class StoreInterface {
     public:
-        virtual void operator()(const node_data_t &in, void* extra_args) = 0;
+        virtual void operator()(const chain_pair &, void* extra_args) = 0;
 };
 
 #endif

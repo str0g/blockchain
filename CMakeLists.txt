@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(PKG_CONFIG_REQUIRED_VERSION 1.6.1)
 
-
 option(WITH_TESTS "Build unit tests" FALSE)
 if(WITH_TESTS)
     add_definitions(-DWITH_TESTS)
@@ -19,7 +18,7 @@ find_package(PkgConfig ${PKG_CONFIG_REQUIRED_VERSION} REQUIRED)
 if(WITH_TESTS)
     pkg_check_modules(GTEST REQUIRED gtest>=1.8.1)
 endif()
-
+pkg_search_module(OPENSSL REQUIRED openssl)
 
 #force out source build
 set(CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Build)

@@ -6,10 +6,12 @@
 #include <istream>
 #include <cstring>
 #include <iostream>
+#include <unordered_map>
+#include <openssl/sha.h>
 
 struct node_data_t {
     struct element_t {
-        char element[256];
+        char element[128];
 
         element_t() {
             memset(&element, '\0', sizeof(element));
@@ -30,30 +32,22 @@ struct node_data_t {
 
     using Elements = std::vector<element_t>;
 
-    struct header_t {
-        size_t index;
-        size_t elements_nb;
-        char sha[65];
-    
-        header_t() : index(0), elements_nb(0) {
-            memset(&sha, '\0', sizeof(sha));
-        }
-
-        private:
-            header_t& operator=(const header_t&) = delete;
-    };
-    header_t header;
+    size_t block_id;
+    size_t elements_nb;
+    char sha[65];
     Elements elements;
 
+    node_data_t();
 
     friend std::istream& operator>>(std::istream&, node_data_t&);
     friend std::ostream& operator<<(std::ostream&, node_data_t&);
 
-    node_data_t() = default;
-
+    std::vector<unsigned char> serialize() const;
     private:
         node_data_t& operator=(const node_data_t&) = delete;
 };
 
+using chain_it = std::unordered_map<std::__cxx11::basic_string<char>, node_data_t>::iterator;
+using chain_pair = std::pair<const std::__cxx11::basic_string<char>, node_data_t>;
 
 #endif
