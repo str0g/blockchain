@@ -5,18 +5,18 @@
 
 #include "load_interface.h"
 #include "store_interface.h"
+#include "delete_interface.h"
 
 class Blockchain {
     public:
         static Blockchain& getInstance();
 
         std::vector<const char*> verify() const;
-        size_t count() const;
+        size_t count(size_t&) const;
         void store(void* =nullptr);
         void load(void* = nullptr);
         const node_data_t& add(node_data_t&);
         void remove(const std::string&);
-        std::string get_sha256(const std::string&) const;
         std::string get_sha256(const std::vector<unsigned char>&) const;
 
         const node_data_t& get(const char*) const;
@@ -42,6 +42,7 @@ class Blockchain {
         std::unordered_map<std::string, node_data_t> chain;
         LoadInterface* _load;
         StoreInterface* _store;
+        DeleteInterface* _delete;
 };
 
 #endif

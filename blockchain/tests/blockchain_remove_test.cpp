@@ -20,11 +20,14 @@ class BlockchainTest : public Test {
 
 TEST_F(BlockchainTest, remove_by_sha) {
     auto& blockchain = Blockchain::getInstance();
-    ASSERT_EQ(blockchain.count(), 1);
+    size_t size;
+    ASSERT_EQ(blockchain.count(size), 1);
+    ASSERT_EQ(size, 209);
 
     blockchain.remove("d49c6e345abe45eee2cd0adf49c5049801971eec65256ecef8f08d97e2ee54bd");
 
-    ASSERT_EQ(blockchain.count(), 0);
+    ASSERT_EQ(blockchain.count(size), 0);
+    ASSERT_EQ(size, 0);
 }
 
 TEST_F(BlockchainTest, remove_two) {
@@ -35,23 +38,30 @@ TEST_F(BlockchainTest, remove_two) {
     data.elements_nb = 1;
     data.elements.resize(1);
     strcpy(data.elements[0], "line2");
-        
+
+    size_t size;
     blockchain.add(data);
-    ASSERT_EQ(blockchain.count(), 2);
+    ASSERT_EQ(blockchain.count(size), 2);
+    ASSERT_EQ(size, 418);
 
     blockchain.remove("d49c6e345abe45eee2cd0adf49c5049801971eec65256ecef8f08d97e2ee54bd");
 
-    ASSERT_EQ(blockchain.count(), 1);
+    ASSERT_EQ(blockchain.count(size), 1);
+    ASSERT_EQ(size, 209);
     blockchain.remove("b160fc9b85d33f334a2c85c0398523ea9a8be0dc0da758c30ddeccd376daac08");
-    ASSERT_EQ(blockchain.count(), 0);
+    ASSERT_EQ(blockchain.count(size), 0);
+    ASSERT_EQ(size, 0);
 }
 
 TEST_F(BlockchainTest, remove_invalid_sha) {
     auto& blockchain = Blockchain::getInstance();
 
-    ASSERT_EQ(blockchain.count(), 1);
+    size_t size;
+    ASSERT_EQ(blockchain.count(size), 1);
+    ASSERT_EQ(size, 209);
     blockchain.remove("b160fc9b85d33f334a2c85c0398523ea9a8be0dc0da758c30ddeccd376daac08");
-    ASSERT_EQ(blockchain.count(), 1);
+    ASSERT_EQ(blockchain.count(size), 1);
+    ASSERT_EQ(size, 209);
 
     ASSERT_THROW(blockchain.remove("invalid_length"), std::invalid_argument);
 }

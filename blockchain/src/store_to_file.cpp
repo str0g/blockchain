@@ -12,10 +12,11 @@ void StoreToFile::operator()(const chain_pair& it, void *extra_args) {
         f.write((const char*)&v[0], v.size());
         f.close();
 }
-//@TODO WITH_TEST
+
+#ifdef WITH_TESTS
 void StoreToFile::set_path(const std::string& _path) {
     path = _path;
 }
 
 StoreToFile::~StoreToFile() {}
-//
+#endif

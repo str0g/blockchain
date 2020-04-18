@@ -3,18 +3,19 @@
 
 #include "load_interface.h"
 #include "common_store_load.h"
-#include "node_data.h"
 
 class LoadFromFile: public LoadInterface, public CommonStoreLoad {
     public:
         void operator()(node_data_t&, void *extra_args);
 
         LoadFromFile();
-        //todo WITH TEST
+#ifdef WITH_TESTS
         virtual ~LoadFromFile();
         void set_path(const std::string&);
-        //
     protected:
+#else
+    private:
+#endif
         std::vector<std::string> files;
         std::vector<std::string>::iterator it;
 

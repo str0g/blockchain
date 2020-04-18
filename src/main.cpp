@@ -11,7 +11,6 @@ bool next_action(void(*fun)(const char *opt, void *ptr),void *ptr, int argc, cha
 void help();
 
 int main(int argc, char **argv) {
-        //TODO parser args
     auto& blockchain = Blockchain::getInstance();
     blockchain.load();
 
@@ -106,7 +105,10 @@ int main(int argc, char **argv) {
                 blockchain.remove(optarg);
                 break;
             case 'c':
-                std::cout << blockchain.count() << std::endl;
+                {
+                size_t size;
+                std::cout << "elements: " << blockchain.count(size) << " size: " << size << std::endl;
+                }
                 break;
             case 'v':
                 {

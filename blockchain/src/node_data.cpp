@@ -31,7 +31,7 @@ node_data_t::node_data_t () : block_id(0), elements_nb(0) {
 
 std::vector<unsigned char> node_data_t::serialize() const {
     std::vector<unsigned char> v;
-    v.resize(sizeof(block_id) + sizeof(sha) + sizeof(block_id) + elements_nb*sizeof(element_t));
+    v.resize(size());
     memset(&v[0], '\0', v.size());
 
     size_t i = 0;
@@ -45,4 +45,8 @@ std::vector<unsigned char> node_data_t::serialize() const {
         memcpy(&v[i], &elements[0], elements_nb * sizeof(element_t));
 
     return v;
+}
+
+size_t node_data_t::size() const {
+    return sizeof(block_id) + sizeof(sha) + sizeof(block_id) + elements_nb*sizeof(element_t);
 }

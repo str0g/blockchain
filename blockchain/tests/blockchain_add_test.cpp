@@ -36,7 +36,9 @@ TEST_F(BlockchainTest, add_one) {
 TEST_F(BlockchainTest, add_with_parent) {
     auto& blockchain = Blockchain::getInstance();
 
-    ASSERT_EQ(blockchain.count(), 0);
+    size_t size;
+    ASSERT_EQ(blockchain.count(size), 0);
+    ASSERT_EQ(size, 0);
     {
     node_data_t data;
     data.block_id = 1;
@@ -78,7 +80,8 @@ TEST_F(BlockchainTest, add_with_parent) {
 
     }
 
-    ASSERT_EQ(blockchain.count(), 2);
+    ASSERT_EQ(blockchain.count(size), 2);
+    ASSERT_EQ(size, 546);
 }
 
 TEST_F(BlockchainTest, add_same_twice) {

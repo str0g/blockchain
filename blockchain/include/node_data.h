@@ -41,6 +41,8 @@ struct node_data_t {
 
     node_data_t();
 
+    size_t size() const;
+
     friend std::istream& operator>>(std::istream&, node_data_t&);
     friend std::ostream& operator<<(std::ostream&, node_data_t&);
 

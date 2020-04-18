@@ -5,6 +5,7 @@
 
 #include "load_from_file.h"
 #include "store_to_file.h"
+#include "delete_file.h"
 #include "blockchain.h"
 
 
@@ -13,13 +14,16 @@ Blockchain& Blockchain::getInstance() {
     return out;
 }
 
-Blockchain::Blockchain() : _load(new LoadFromFile()), _store(new StoreToFile) {
+Blockchain::Blockchain() : _load(new LoadFromFile()), _store(new StoreToFile), _delete(new DeleteFile) {
     std::cout << "Blockchain initialized" << std::endl;
 }
 
 Blockchain::~Blockchain() {
+    store();
+
     delete _load;
     delete _store;
+    delete _delete;
 }
 
 void Blockchain::set_custom_load(LoadInterface* obj) {
@@ -66,7 +70,16 @@ void Blockchain::remove(const std::string& sha) {
         throw std::invalid_argument("expected sha256");
     }
 
-    chain.erase(sha);
+    auto obj = chain.find(sha);
+    if(obj == chain.end())
+        return;
+
+    auto child = find_child(sha);
+    if(child != chain.end())
+        std::cout << "New orphane " << child->first << std::endl;
+
+    (*_delete)(obj->first, obj->second);
+    chain.erase(obj);
 }
 
 chain_it Blockchain::find_child(const std::string& sha) {
@@ -78,36 +91,15 @@ chain_it Blockchain::find_child(const std::string& sha) {
     return chain.end();
 }
 
-size_t Blockchain::count() const {
+size_t Blockchain::count(size_t &size) const {
+    size = 0;
+    for(auto &e : chain) {
+        size += e.second.size();
+    }
+
     return chain.size();
 }
-//@TODO WITH_TESTS
-std::string Blockchain::get_sha256(const std::string& in) const {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    int err;
 
-    SHA256_CTX sha256;
-    if(err=SHA256_Init(&sha256) != 1) {
-        std::cout << strerror(errno) << std::endl;
-        throw std::runtime_error(strerror(errno));
-    }
-    if(err=SHA256_Update(&sha256, in.c_str(), in.length()) != 1) {
-        std::cout << strerror(errno) << std::endl;
-        throw std::runtime_error(strerror(errno));
-    }
-    if(err=SHA256_Final(hash, &sha256) != 1) {
-        std::cout << strerror(errno) << std::endl;
-        throw std::runtime_error(strerror(errno));
-    }
-
-    std::stringstream ss;
-    for(int i=0; i<SHA256_DIGEST_LENGTH; i++) {
-        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
-    }
-
-    return ss.str();
-}
-//
 std::string Blockchain::get_sha256(const std::vector<unsigned char>& in) const {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     int err;

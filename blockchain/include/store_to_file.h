@@ -4,13 +4,13 @@
 #include "store_interface.h"
 #include "common_store_load.h"
 
-class StoreToFile: public StoreInterface, CommonStoreLoad {
+class StoreToFile: public StoreInterface, public CommonStoreLoad {
     public:
         void operator()(const chain_pair&, void *extra_args);
-//@TODO WITH_DEBUG
+#ifdef WITH_TESTS
         void set_path(const std::string& path);
         virtual ~StoreToFile();
-//
+#endif
 };
 
 #endif

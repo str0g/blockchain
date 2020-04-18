@@ -47,9 +47,9 @@ LoadFromFile::LoadFromFile() {
     set_files();
 }
 
-//@TODO WITH_TESTS
+#ifdef WITH_TESTS
 LoadFromFile::~LoadFromFile() {}
 void LoadFromFile::set_path(const std::string& _path) {
     path = _path;
 }
-//
+#endif
