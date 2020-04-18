@@ -7,7 +7,18 @@
 
 class LoadFromFile: public LoadInterface, public CommonStoreLoad {
     public:
-        void operator()(node_data_t&, void *extra_args); 
+        void operator()(node_data_t&, void *extra_args);
+
+        LoadFromFile();
+        //todo WITH TEST
+        virtual ~LoadFromFile();
+        void set_path(const std::string&);
+        //
+    protected:
+        std::vector<std::string> files;
+        std::vector<std::string>::iterator it;
+
+        void set_files();
 };
 
 #endif

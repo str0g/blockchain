@@ -81,7 +81,7 @@ chain_it Blockchain::find_child(const std::string& sha) {
 size_t Blockchain::count() const {
     return chain.size();
 }
-
+//@TODO WITH_TESTS
 std::string Blockchain::get_sha256(const std::string& in) const {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     int err;
@@ -107,7 +107,7 @@ std::string Blockchain::get_sha256(const std::string& in) const {
 
     return ss.str();
 }
-
+//
 std::string Blockchain::get_sha256(const std::vector<unsigned char>& in) const {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     int err;
@@ -145,4 +145,33 @@ void Blockchain::store(void *extra_args) {
 }
 
 void Blockchain::load(void *extra_args) {
+    while(true) {
+        try {
+            node_data_t data;
+            (*_load)(data, extra_args);
+
+            auto hash = get_sha256(data.serialize());
+            auto it = chain.emplace(std::move(hash), std::move(data));
+        } catch (std::out_of_range) {
+            std::cout << chain.size() <<" blocks has been loaded" << std::endl;
+            break;
+        }
+    }
+}
+
+std::vector<const char*> Blockchain::verify() const {
+    std::vector<const char*> v;
+    for(auto& n : chain) {
+        const char* sha {n.second.sha};
+        try {
+            chain.at(sha);
+        } catch(const std::out_of_range& e) {
+            v.push_back(sha);
+        }
+    }
+    return v;
+}
+
+const node_data_t& Blockchain::get(const char* sha) const {
+    return chain.at(sha);
 }

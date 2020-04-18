@@ -13,6 +13,7 @@ void help();
 int main(int argc, char **argv) {
         //TODO parser args
     auto& blockchain = Blockchain::getInstance();
+    blockchain.load();
 
     int c;
     int digit_optind = 0;
@@ -23,6 +24,8 @@ int main(int argc, char **argv) {
             {"add", required_argument, 0, 'a'},
             {"remove", required_argument, 0, 'r'},
             {"count", no_argument, 0, 'c'},
+            {"verify", no_argument, 0, 'v'},
+            {"info", required_argument, 0, 'i'},
         };
 
         c = getopt_long(argc, argv, "a", long_options, &option_index);
@@ -105,6 +108,23 @@ int main(int argc, char **argv) {
             case 'c':
                 std::cout << blockchain.count() << std::endl;
                 break;
+            case 'v':
+                {
+                auto v = blockchain.verify();
+                if (!v.empty())
+                    std::cout << "found problems with:" << std::endl;
+                for (auto& sha : v)
+                    std::cout << sha << std::endl;
+                }
+                break;
+            case 'i':
+                try {
+                    auto data = blockchain.get(optarg);
+                    std::cout << data << std::endl;
+                } catch (const std::exception& e) {
+                    std::cout << optarg << " not found" << std::endl;
+                }
+                break;
             default:
                 std::cout << "getopt returned character code 0x" << std::hex << c << std::endl;
                 break;
@@ -142,6 +162,8 @@ void help() {
             "\t--add <id> <parent sha> <line1> <linen>: Add block\n"
             "\t--remove: <arg>      Remove block by block sha\n"
             "\t--count:             Set sigma of program\n"
+            "\t--verify             Print problematic nodes\n"
+            "\t--info               Get node info\n"
             "\t--help:              Show help\n";
     exit(1);
 }

@@ -8,12 +8,15 @@
 CommonStoreLoad::CommonStoreLoad() {
     if(path.empty()) {
         char cwd[PATH_MAX];
-        if (getcwd(cwd, sizeof(cwd)) == NULL) {
+        if (getcwd(cwd, sizeof(cwd)) == nullptr) {
             throw std::runtime_error("could not get current directory");
         }
 
         path = std::string(cwd) + "/chain_data/";
     }
+}
+
+CommonStoreLoad::~CommonStoreLoad() {
 }
 
 std::string CommonStoreLoad::path;

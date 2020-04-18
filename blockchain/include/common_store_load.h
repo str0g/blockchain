@@ -6,6 +6,7 @@
 class CommonStoreLoad {
     public:
         CommonStoreLoad();
+        virtual ~CommonStoreLoad();
     protected:
         static std::string path;
     private:

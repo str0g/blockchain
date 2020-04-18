@@ -12,11 +12,16 @@ std::istream& operator>>(std::istream& os, node_data_t& obj) {
     return os;
 }
 
+std::ostream& operator<<(std::ostream& os, node_data_t::element_t& obj) {
+    return os << obj.element;
+}
+
 std::ostream& operator<<(std::ostream& os, node_data_t& obj) {
-    auto v = obj.serialize();
-
-    os.write((const char*)&v[0], v.size());
-
+    os << "Parent: " << obj.sha << std::endl;
+    os << "Block_id: " << obj.block_id << std::endl;
+    os << "Elements[" << obj.elements_nb << "]:" << std::endl;
+    for(auto &e : obj.elements)
+        os << "\t" << e << std::endl;
     return os;
 }
 

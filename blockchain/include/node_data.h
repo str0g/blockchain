@@ -26,6 +26,8 @@ struct node_data_t {
             return element[0];
         }
 
+        friend std::ostream& operator<<(std::ostream&, element_t&);
+
         private:
             element_t& operator=(element_t const&) = delete;
     };

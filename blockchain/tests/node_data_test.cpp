@@ -21,7 +21,8 @@ TEST_F(Test, serlization_stream_test) {
     }
 
     std::stringstream s;
-    s << node_data;
+    auto v = node_data.serialize();
+    s.write((const char*)&v[0], v.size());
 
     node_data_t input_node_data;
     s >> input_node_data;

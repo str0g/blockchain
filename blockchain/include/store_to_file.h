@@ -8,7 +8,8 @@ class StoreToFile: public StoreInterface, CommonStoreLoad {
     public:
         void operator()(const chain_pair&, void *extra_args);
 //@TODO WITH_DEBUG
-        void swap_path(std::string& path);
+        void set_path(const std::string& path);
+        virtual ~StoreToFile();
 //
 };
 

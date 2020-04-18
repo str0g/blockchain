@@ -9,6 +9,7 @@
 class LoadInterface {
     public:
         virtual void operator()(node_data_t &in_and_out, void* extra_args) = 0;
+        virtual ~LoadInterface() {}
 };
 
 #endif

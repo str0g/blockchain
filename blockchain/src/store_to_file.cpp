@@ -13,7 +13,9 @@ void StoreToFile::operator()(const chain_pair& it, void *extra_args) {
         f.close();
 }
 //@TODO WITH_TEST
-void StoreToFile::swap_path(std::string& _path) {
-    std::swap(path, _path);
+void StoreToFile::set_path(const std::string& _path) {
+    path = _path;
 }
+
+StoreToFile::~StoreToFile() {}
 //

@@ -10,7 +10,7 @@ class Blockchain {
     public:
         static Blockchain& getInstance();
 
-        void verify() const;
+        std::vector<const char*> verify() const;
         size_t count() const;
         void store(void* =nullptr);
         void load(void* = nullptr);
@@ -18,6 +18,8 @@ class Blockchain {
         void remove(const std::string&);
         std::string get_sha256(const std::string&) const;
         std::string get_sha256(const std::vector<unsigned char>&) const;
+
+        const node_data_t& get(const char*) const;
         
         void set_custom_load(LoadInterface*);
         void set_custom_store(StoreInterface*);
